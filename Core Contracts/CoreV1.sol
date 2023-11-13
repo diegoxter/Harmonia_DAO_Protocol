@@ -161,11 +161,11 @@ contract Winslow_Core_V1 {
     }
 
 
-    function SubmitErosProposal(string memory Memo, address Slot, uint256 VotingLength, uint256 RequestedEther, uint256 RequestedAssetAmount, uint8 RequestedAssetID) public returns(bool success){
+    function SubmitErosProposal(address ProposalAddress) public returns(bool success){
 
         require(ReceiveProposalCost());
 
-        InitializeErosProposal(Memo, Slot, VotingLength, RequestedEther, RequestedAssetAmount, RequestedAssetID);
+        InitializeErosProposal(ProposalAddress);
         
         return(success);
 
@@ -228,25 +228,35 @@ contract Winslow_Core_V1 {
 
     }
 
-    function InitializeErosProposal(string memory Memo, address Slot, uint256 VotingLength, uint256 RequestedEther, uint256 RequestedAssetAmount, uint8 RequestedAssetID) internal returns(uint256 identifier){
+    function InitializeErosProposal(address ProposalAddress) internal returns(uint256 identifier){
+        uint256 VotingLength = EROS(ProposalAddress).VoteLength();
 
         require(VotingLength >= 86400 && VotingLength <= 1209600, "Voting must be atleast 24 hours and less than two weeks");
-        require(Slot != address(0), "ErosProposals must have a slotted contract");
+        require(ProposalAddress != address(0), "ErosProposals must have a slotted contract");
 
         uint256 NewIdentifier = MRIdentifier++;
         MRIdentifier++;
 
+        string memory Memo = EROS(ProposalAddress).ProposalMemo();
+        uint256 RequestedEther = EROS(ProposalAddress).RequestEther();
+        uint256 RequestedAssetAmount = EROS(ProposalAddress).RequestTokens();
+        uint8 RequestedAssetID = EROS(ProposalAddress).TokenIdentifier();
+
+        if(RequestedAssetAmount > 0){
+            require(RequestedAssetID > 0 && RequestedAssetID <= 255 && RequestedAssetID <= Treasury(TreasuryContract).RegisteredAssetLimit(), "Requested asset ID must be atleast 1 and be registered in the treasury");
+        }
+
         uint256 VotingInstanceID = Voting(VotingContract).InitializeVoteInstance(NewIdentifier, VotingLength, true);
 
-        if(EROS(Slot).Multi() ==  true){
-            require(EROS(Slot).OptionCount() > 1, 'Eros proposal marked as multiple options true, but less than two options are available');
+        if(EROS(ProposalAddress).Multi() ==  true){
+            require(EROS(ProposalAddress).OptionCount() > 1, 'Eros proposal marked as multiple options true, but less than two options are available');
             ProposalInfos[NewIdentifier] = ProposalInfo(Memo, ProposalTypes(2), SimpleProposalTypes(0), ProposalStatus(0), VotingInstanceID, VotingLength);
-            Proposals[NewIdentifier] = Proposal(Slot, SecurityStatus(0), RequestedEther, RequestedAssetAmount, RequestedAssetID, EROS(Slot).OptionCount(), true, false, msg.sender);
+            Proposals[NewIdentifier] = Proposal(ProposalAddress, SecurityStatus(0), RequestedEther, RequestedAssetAmount, RequestedAssetID, EROS(ProposalAddress).OptionCount(), true, false, msg.sender);
             ProxyArgs[NewIdentifier] = EmptyProxy;
         }
         else{
             ProposalInfos[NewIdentifier] = ProposalInfo(Memo, ProposalTypes(2), SimpleProposalTypes(0), ProposalStatus(0), VotingInstanceID, VotingLength);
-            Proposals[NewIdentifier] = Proposal(Slot, SecurityStatus(0), RequestedEther, RequestedAssetAmount, RequestedAssetID, 0, false, false, msg.sender);
+            Proposals[NewIdentifier] = Proposal(ProposalAddress, SecurityStatus(0), RequestedEther, RequestedAssetAmount, RequestedAssetID, 0, false, false, msg.sender);
             ProxyArgs[NewIdentifier] = EmptyProxy;
         }
 
@@ -366,6 +376,8 @@ contract Winslow_Core_V1 {
     //  Eros Executionting
 
     function ExecuteErosProposal(uint256 ProposalID) internal {
+
+        
 
         
     }
@@ -615,4 +627,10 @@ interface EROS {
     function DAO() external view returns(address DAOaddress);
     function Multi() external view returns(bool);
     function OptionCount() external view returns(uint8);
+    function RequestEther() external view returns(uint8);
+    function TokenIdentifier() external view returns(uint8);
+    function Execute() external returns(bool success);
+    function ProposalMemo() external view returns(string memory);
+    function VoteLength() external view returns(uint256);
+    function RequestTokens() external view returns(uint256);
 }

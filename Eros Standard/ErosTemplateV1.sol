@@ -9,9 +9,12 @@ contract ErosProposal {
 
 
     //Fund request/s for the proposal, can only receive one asset per proposal, may receive both ERC20 and Ether
+    string public ProposalMemo = "This is an example proposal";
+    uint256 public VoteLength = 86400; //Must be within the bounds in the require function on the Core DAO contract VotingLength >= 86400 && VotingLength <= 1209600
     uint256 public RequestEther = 0 ether; //Optional, can be ommited
     uint256 public RequestTokens = 0; //Optional, can be 0 but must exist to function properly
     uint8 public TokenIdentifier = 0; //Optional, can be 0 but must exist to function properly
+
 
     //Events
     event ContractExecuted(uint256 time);
@@ -35,7 +38,7 @@ contract ErosProposal {
         ExtCon(ExternalContract).Update("This value was updated by the DAO!");
         //External or internal code to execute
 
-
+        //Send back excess funds
         if(address(this).balance > 0){ //Must be the last state changing part of this function
             payable(DAO).transfer(address(this).balance);
         }
