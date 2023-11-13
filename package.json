@@ -1,0 +1,28 @@
+{
+  "name": "winslow-dao",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "npx hardhat test",
+    "slither": "py -m slither ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Soteria-Smart-Contracts/Winslow-DAO.git"
+  },
+  "private": false,
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.8",
+    "hardhat": "^2.19.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "ethers": "^6.7.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}

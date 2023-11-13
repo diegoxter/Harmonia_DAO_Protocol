@@ -1,1 +1,19 @@
 .vscode
+
+# dependencies
+/node_modules
+
+# local env files
+.env
+.env*.local
+
+# production
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+*.lock
