@@ -14,8 +14,8 @@ contract Winslow_Voting_V1 {
     address public DAO;
 
     // Percentages in Basis Points
-    uint256 public ExecutorCut;
-    uint256 public BurnCut;
+    uint16 public ExecutorCut;
+    uint16 public BurnCut;
 
     // Proposals being tracked by id here
     mapping(uint256 => VoteInstance) public VotingInstances;
@@ -91,7 +91,7 @@ contract Winslow_Voting_V1 {
         _;
     } 
 
-    constructor(address DAOAddr, uint8 _ExecusCut, uint8 _BurnCut){
+    constructor(address DAOAddr, uint16 _ExecusCut, uint16 _BurnCut){
         ExecutorCut = _ExecusCut;
         BurnCut = _BurnCut;
         DAO = DAOAddr;
@@ -258,7 +258,7 @@ contract Winslow_Voting_V1 {
 
         //Post results to archive contract function
 
-    function SetTaxAmount(uint256 NewExecCut, uint256 NewBurnCut) external OnlyDAO returns (bool success) {
+    function SetTaxAmount(uint16 NewExecCut, uint16 NewBurnCut) external OnlyDAO returns (bool success) {
         require(NewExecCut > 0 && NewExecCut <= 10000);
         require(NewExecCut > 0 && NewExecCut <= 10000);
 

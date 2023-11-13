@@ -4,7 +4,7 @@ if a new external core modules and contracts are deployed by changing their addr
 providing previous contract information to the new contracts.
 When setting up a new core or voting contract, ensure cross-compatibility and record keeping 
 done by the archive contract, voting index and proposal indexes never restart */
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.17;
 
 //import "./TreasuryV1.sol";
 //import "./VotingV1.sol";
@@ -527,7 +527,7 @@ contract Winslow_Core_V1 {
         VotingContract = _VotingAddress;
         SaleFactoryContract = _SaleFactory;
         FoundationAddress = _FoundationAddress;
-        InitialSetter = address(0); //Once the reasury address has been set for the first time, it can only be set again via proposal 
+        InitialSetter = address(0); //Once the reasury address has been set for the first time, it can only be set again via proposal
         InitialContractsSet = true;
         IsActiveContract = true;
 
